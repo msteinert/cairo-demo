@@ -109,7 +109,14 @@ main(int argc, char **argv)
 		XNextEvent(display, &event);
 		switch (event.type) {
 		case Expose:
+			cairo_save(cr);
+			cairo_set_source_rgb(cr, 1., 1., 1.);
+			cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
+			cairo_paint(cr);
+			cairo_restore(cr);
+			cairo_save(cr);
 			draw(cr, width, height);
+			cairo_restore(cr);
 			break;
 		case ConfigureNotify:
 			width = event.xconfigure.width;
