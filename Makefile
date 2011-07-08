@@ -1,9 +1,16 @@
 # Define program name
 PROGRAM = cairo-demo
+# Define the program name
+NAME = "Cairo Demo"
+# Define the program version
+VERSION = "0.1"
 # Define source files
 SOURCES = \
 	cairo-demo.c \
-	cairo-draw.c
+	cairo-draw.c \
+	cairo-events.c \
+	cairo-main.c \
+	cairo-operators.c
 # Define compiler flags
 CFLAGS =
 # Define linker flags
@@ -42,7 +49,7 @@ $(DEPDIR):
 	$(V_at)mkdir -p $@
 # Implicit compilation rule
 %.o: %.c | $(DEPDIR)
-	$(V_CC)$(CC) $(CPPFLAGS) -I. $(CFLAGS) $(shell pkg-config --cflags $(PKG_CONFIG_DEPS)) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c $< -o $@
+	$(V_CC)$(CC) $(CPPFLAGS) -I. -DNAME=\"$(NAME)\" -DPROGRAM=\"$(PROGRAM)\" -DVERSION=\"$(VERSION)\" $(CFLAGS) $(shell pkg-config --cflags $(PKG_CONFIG_DEPS)) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c $< -o $@
 	$(V_at)mv $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
 # Link rule
 $(PROGRAM): $(OBJECTS)
