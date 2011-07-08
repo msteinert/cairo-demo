@@ -1,5 +1,6 @@
 #include "cairo-operators.h"
 #include <stdlib.h>
+#include <string.h>
 
 void
 setup(cairo_t *cr, int width, int height)

@@ -1,12 +1,14 @@
 #include "cairo-demo.h"
+#include "cairo-draw.h"
 #include "cairo-events.h"
 #include <cairo-xlib.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <X11/Xlib.h>
 #include <X11/keysym.h>
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
 
 struct _cairo_demo_t {
 	Display *display;
@@ -17,9 +19,6 @@ struct _cairo_demo_t {
 	int width, height;
 	cairo_demo_draw_function_t draw;
 };
-
-void
-draw(cairo_t *cr, int width, int height);
 
 cairo_demo_t *
 cairo_demo_new(const char *name, int width, int height)
@@ -55,13 +54,16 @@ cairo_demo_new(const char *name, int width, int height)
 	utf8_string = XInternAtom(self->display, "UTF8_STRING", False);
 	XChangeProperty(self->display, self->window,
 			XInternAtom(self->display, "_NET_WM_NAME", False),
-			utf8_string, 8, PropModeReplace, name, strlen(name));
+			utf8_string, 8, PropModeReplace,
+			(const unsigned char *)name, strlen(name));
 	XChangeProperty(self->display, self->window,
 			XInternAtom(self->display, "WM_NAME", False),
-			utf8_string, 8, PropModeReplace, name, strlen(name));
+			utf8_string, 8, PropModeReplace,
+			(const unsigned char *)name, strlen(name));
 	XChangeProperty(self->display, self->window,
 			XInternAtom(self->display, "WM_ICON_NAME", False),
-			utf8_string, 8, PropModeReplace, name, strlen(name));
+			utf8_string, 8, PropModeReplace,
+			(const unsigned char *)name, strlen(name));
 	self->wm_delete_window =
 		XInternAtom(self->display, "WM_DELETE_WINDOW", False);
 	XSetWMProtocols(self->display, self->window,
@@ -81,7 +83,7 @@ cairo_demo_new(const char *name, int width, int height)
 		goto error;
 	}
 	XMapWindow(self->display, self->window);
-	self->draw = draw;
+	self->draw = cairo_draw;
 	return self;
 error:
 	cairo_demo_destroy(self);
@@ -138,6 +140,9 @@ cairo_demo_run(cairo_demo_t *self)
 			}
 			break;
 		case Expose:
+			if (!self->draw) {
+				break;
+			}
 			cairo_save(self->cr);
 			cairo_rectangle(self->cr,
 					event.xexpose.x, event.xexpose.y,

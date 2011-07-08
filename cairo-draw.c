@@ -3,7 +3,8 @@
 #include <math.h>
 #include <stdlib.h>
 
-void
+__attribute__((unused))
+static void
 draw_1(cairo_t *cr)
 {
 	/* draw the black 'X' */
@@ -28,7 +29,8 @@ draw_1(cairo_t *cr)
 	cairo_fill(cr);
 }
 
-void
+__attribute__((unused))
+static void
 draw_2(cairo_t *cr)
 {
 	cairo_pattern_t *radial, *linear;
@@ -57,7 +59,8 @@ draw_2(cairo_t *cr)
 	cairo_fill(cr);
 }
 
-void
+__attribute__((unused))
+static void
 draw_3(cairo_t *cr)
 {
 	double x, y, px, ux = 1., uy = 1., dashlength;
@@ -131,11 +134,11 @@ draw_3(cairo_t *cr)
  * \param height The height of the window.
  */
 void
-draw(cairo_t *cr, int width, int height)
+cairo_draw(cairo_t *cr, int width, int height)
 {
 	/* set the drawing scale */
 	cairo_scale(cr, width, height);
 	cairo_set_source_rgb(cr, 1., 1., 1.);
 	cairo_paint(cr);
-	draw_3(cr);
+	draw_1(cr);
 }

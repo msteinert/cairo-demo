@@ -12,7 +12,7 @@ SOURCES = \
 	cairo-main.c \
 	cairo-operators.c
 # Define compiler flags
-CFLAGS =
+CFLAGS = -g -O2 -Wall
 # Define linker flags
 LDFLAGS =
 # Define pkg-config dependencies

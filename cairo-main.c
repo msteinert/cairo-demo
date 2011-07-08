@@ -1,12 +1,10 @@
 #include "cairo-demo.h"
+#include "cairo-draw.h"
 #include "cairo-operators.h"
 #include <getopt.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-void
-draw(cairo_t *cr, int width, int height);
 
 void
 help(const char *name)
@@ -26,7 +24,7 @@ main(int argc, char **argv)
 	int i, opt;
 	bool png = false;
 	cairo_demo_t *demo;
-	cairo_demo_draw_function_t draw = draw;
+	cairo_demo_draw_function_t draw = cairo_draw;
 	struct option options[] = {
 		{ "help", no_argument, NULL, 'h' },
 		{ "operator", required_argument, NULL, 'o' },
