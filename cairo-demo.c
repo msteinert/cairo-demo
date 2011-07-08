@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <X11/Xlib.h>
+#include <X11/keysym.h>
 
 void
 draw(cairo_t *cr, int width, int height);
@@ -51,14 +52,15 @@ int
 main(int argc, char **argv)
 {
 	int status = EXIT_SUCCESS;
-	int n, width = 1280, height = 720;
+	unsigned long key, lower;
+	int n, width = 256, height = 256;
 	cairo_surface_t *surface = NULL;
 	cairo_t *cr = NULL;
+	Atom utf8_string, wm_delete_window, wm_protocols;
 	XSetWindowAttributes attr;
 	Display *display = NULL;
 	Window window = 0L;
 	XEvent event;
-	Atom atom;
 	long mask;
 	display = XOpenDisplay(NULL);
 	if (!display) {
@@ -67,7 +69,7 @@ main(int argc, char **argv)
 	}
 	n = DefaultScreen(display);
 	mask = CWEventMask;
-	attr.event_mask = ExposureMask | StructureNotifyMask;
+	attr.event_mask = ExposureMask | StructureNotifyMask | KeyReleaseMask;
 	window = XCreateWindow(display, RootWindow(display, n), 0, 0,
 			width, height, 0, DefaultDepth(display, n),
 			InputOutput, DefaultVisual(display, n),
@@ -76,21 +78,19 @@ main(int argc, char **argv)
 		fprintf(stderr, "demo: failed to create window\n");
 		goto error;
 	}
-	atom = XInternAtom(display, "UTF8_STRING", False);
+	utf8_string = XInternAtom(display, "UTF8_STRING", False);
 	XChangeProperty(display, window,
 			XInternAtom(display, "_NET_WM_NAME", False),
-			atom, 8, PropModeReplace, NAME,
-			strlen(NAME));
+			utf8_string, 8, PropModeReplace, NAME, strlen(NAME));
 	XChangeProperty(display, window,
 			XInternAtom(display, "WM_NAME", False),
-			atom, 8, PropModeReplace, NAME,
-			strlen(NAME));
+			utf8_string, 8, PropModeReplace, NAME, strlen(NAME));
 	XChangeProperty(display, window,
 			XInternAtom(display, "WM_ICON_NAME", False),
-			atom, 8, PropModeReplace, NAME,
-			strlen(NAME));
-	atom = XInternAtom(display, "WM_DELETE_WINDOW", False);
-	XSetWMProtocols(display, window, &atom, 1);
+			utf8_string, 8, PropModeReplace, NAME, strlen(NAME));
+	wm_protocols = XInternAtom(display, "WM_PROTOCOLS", False);
+	wm_delete_window = XInternAtom(display, "WM_DELETE_WINDOW", False);
+	XSetWMProtocols(display, window, &wm_delete_window, 1);
 	surface = cairo_xlib_surface_create(display, window,
 			DefaultVisual(display, n), width, height);
 	status = cairo_surface_status(surface);
@@ -108,13 +108,25 @@ main(int argc, char **argv)
 	while (true) {
 		XNextEvent(display, &event);
 		switch (event.type) {
+		case KeyRelease:
+			key = XLookupKeysym(&event.xkey, 0);
+			if (ShiftMask & event.xkey.state) {
+				XConvertCase(key, &lower, &key);
+			}
+			switch (key) {
+			case XK_q:
+				goto exit;
+			default:
+				break;
+			}
+			break;
 		case Expose:
 			cairo_save(cr);
-			cairo_set_source_rgb(cr, 1., 1., 1.);
-			cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
-			cairo_paint(cr);
-			cairo_restore(cr);
-			cairo_save(cr);
+			cairo_rectangle(cr, event.xexpose.x,
+					event.xexpose.y,
+					event.xexpose.width,
+					event.xexpose.height);
+			cairo_clip(cr);
 			draw(cr, width, height);
 			cairo_restore(cr);
 			break;
@@ -124,7 +136,13 @@ main(int argc, char **argv)
 			cairo_xlib_surface_set_size(surface, width, height);
 			break;
 		case ClientMessage:
-			goto exit;
+			if (event.xclient.message_type == wm_protocols) {
+				if (event.xclient.data.l[0]
+						== wm_delete_window) {
+					goto exit;
+				}
+			}
+			break;
 		case MapNotify:
 		case ReparentNotify:
 			break;

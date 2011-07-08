@@ -12,6 +12,8 @@ LDFLAGS =
 PKG_CONFIG_DEPS = \
 	cairo \
 	cairo-xlib \
+	pango \
+	pangocairo \
 	x11
 # Define object files
 OBJECTS = $(SOURCES:%.c=%.o)
@@ -36,7 +38,7 @@ v_at_0 = @
 all: $(PROGRAM)
 .DEFAULT: all
 # Directory creation rule
-$(DEPDIR) $(prefix)/bin:
+$(DEPDIR):
 	$(V_at)mkdir -p $@
 # Implicit compilation rule
 %.o: %.c | $(DEPDIR)
