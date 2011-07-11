@@ -5,11 +5,11 @@
 void
 setup(cairo_t *cr, int width, int height)
 {
+	cairo_scale(cr, width, height);
 	cairo_save(cr);
 	cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
 	cairo_paint(cr);
 	cairo_restore(cr);
-	cairo_scale(cr, width, height);
 }
 
 void
@@ -335,7 +335,7 @@ cairo_operators_get_function(const char *op)
 	} else if (0 == strcmp(op, "color_burn")) {
 		return draw_color_burn;
 	} else if (0 == strcmp(op, "hard_light")) {
-		return draw_soft_light;
+		return draw_hard_light;
 	} else if (0 == strcmp(op, "soft_light")) {
 		return draw_soft_light;
 	} else if (0 == strcmp(op, "difference")) {

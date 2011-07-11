@@ -17,6 +17,9 @@ void
 cairo_demo_set_draw_function(cairo_demo_t *self,
 		cairo_demo_draw_function_t draw);
 
+void
+cairo_demo_set_png(cairo_demo_t *self, const char *png);
+
 int
 cairo_demo_run(cairo_demo_t *self);
 

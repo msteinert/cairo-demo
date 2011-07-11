@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 void
 help(const char *name)
@@ -22,17 +23,20 @@ int
 main(int argc, char **argv)
 {
 	int i, opt;
-	bool png = false;
 	cairo_demo_t *demo;
 	cairo_demo_draw_function_t draw = cairo_draw;
 	struct option options[] = {
 		{ "help", no_argument, NULL, 'h' },
 		{ "operator", required_argument, NULL, 'o' },
-		{ "png", no_argument, NULL, 'p' },
+		{ "png", required_argument, NULL, 'p' },
 		{ "version", no_argument, NULL, 'v' },
 		{ NULL, no_argument, NULL, '\0' }
 	};
-	const char *sopts = ":ho:v";
+	const char *sopts = ":ho:p:v";
+	demo = cairo_demo_new(NAME, 256, 256);
+	if (!demo) {
+		exit(EXIT_FAILURE);
+	}
 	while (-1 != (opt = getopt_long(argc, argv, sopts, options, &i))) {
 		switch (opt) {
 		case 'h': /* help */
@@ -40,9 +44,12 @@ main(int argc, char **argv)
 			return EXIT_SUCCESS;
 		case 'o': /* operator */
 			draw = cairo_operators_get_function(optarg);
+			if (draw) {
+				cairo_demo_set_draw_function(demo, draw);
+			}
 			break;
 		case 'p': /* png */
-			png = true;
+			cairo_demo_set_png(demo, optarg);
 			break;
 		case 'v': /* version */
 			fprintf(stdout, "%s/%s\n", NAME, VERSION);
@@ -54,10 +61,5 @@ main(int argc, char **argv)
 			return EXIT_FAILURE;
 		}
 	}
-	demo = cairo_demo_new(NAME, 256, 256);
-	if (!demo) {
-		exit(EXIT_FAILURE);
-	}
-	cairo_demo_set_draw_function(demo, draw);
 	exit(cairo_demo_run(demo));
 }

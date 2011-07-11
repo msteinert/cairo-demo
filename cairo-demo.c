@@ -18,6 +18,7 @@ struct _cairo_demo_t {
 	Atom wm_delete_window;
 	int width, height;
 	cairo_demo_draw_function_t draw;
+	char *png;
 };
 
 cairo_demo_t *
@@ -40,7 +41,9 @@ cairo_demo_new(const char *name, int width, int height)
 		goto error;
 	}
 	n = DefaultScreen(self->display);
-	mask = CWEventMask;
+	mask = CWBackPixel | CWBorderPixel | CWEventMask;
+	attr.background_pixel = BlackPixel(self->display, n);
+	attr.border_pixel = BlackPixel(self->display, n);
 	attr.event_mask = ExposureMask | StructureNotifyMask | KeyReleaseMask;
 	self->window = XCreateWindow(self->display,
 			RootWindow(self->display, n), 0, 0,
@@ -82,7 +85,6 @@ cairo_demo_new(const char *name, int width, int height)
 		fprintf(stderr, "demo: %s\n", cairo_status_to_string(status));
 		goto error;
 	}
-	XMapWindow(self->display, self->window);
 	self->draw = cairo_draw;
 	return self;
 error:
@@ -106,6 +108,9 @@ cairo_demo_destroy(cairo_demo_t *self)
 			}
 			XCloseDisplay(self->display);
 		}
+		if (self->png) {
+			free(self->png);
+		}
 		free(self);
 	}
 }
@@ -117,6 +122,12 @@ cairo_demo_set_draw_function(cairo_demo_t *self,
 	self->draw = draw;
 }
 
+void
+cairo_demo_set_png(cairo_demo_t *self, const char *png)
+{
+	self->png = strdup(png);
+}
+
 int
 cairo_demo_run(cairo_demo_t *self)
 {
@@ -124,6 +135,7 @@ cairo_demo_run(cairo_demo_t *self)
 	unsigned long key, lower;
 	XEvent event;
 	Atom wm_protocols = XInternAtom(self->display, "WM_PROTOCOLS", False);
+	XMapWindow(self->display, self->window);
 	while (true) {
 		XNextEvent(self->display, &event);
 		switch (event.type) {
@@ -176,6 +188,9 @@ cairo_demo_run(cairo_demo_t *self)
 		}
 	}
 exit:
+	if (self->png) {
+		cairo_surface_write_to_png(self->surface, self->png);
+	}
 	cairo_demo_destroy(self);
 	return status;
 }
