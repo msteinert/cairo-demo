@@ -8,7 +8,6 @@ VERSION = "0.1"
 SOURCES = \
 	cairo-demo.c \
 	cairo-draw.c \
-	cairo-events.c \
 	cairo-main.c \
 	cairo-operators.c
 # Define compiler flags

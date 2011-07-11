@@ -1,6 +1,5 @@
 #include "cairo-demo.h"
 #include "cairo-draw.h"
-#include "cairo-events.h"
 #include <cairo-xlib.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -127,6 +126,43 @@ cairo_demo_set_png(cairo_demo_t *self, const char *png)
 {
 	self->png = strdup(png);
 }
+
+const char *const events[] = {
+	[KeyPress] = "KeyPress",
+	[KeyRelease] = "KeyRelease",
+	[ButtonPress] = "ButtonPress",
+	[ButtonRelease] = "ButtonRelease",
+	[MotionNotify] = "MotionNotify",
+	[EnterNotify] = "EnterNotify",
+	[LeaveNotify] = "LeaveNotify",
+	[FocusIn] = "FocusIn",
+	[FocusOut] = "FocusOut",
+	[KeymapNotify] = "KeymapNotify",
+	[Expose] = "Expose",
+	[GraphicsExpose] = "GraphicsExpose",
+	[NoExpose] = "NoExpose",
+	[VisibilityNotify] = "VisibilityNotify",
+	[CreateNotify] = "CreateNotify",
+	[DestroyNotify] = "DestroyNotify",
+	[UnmapNotify] = "UnmapNotify",
+	[MapNotify] = "MapNotify",
+	[MapRequest] = "MapRequest",
+	[ReparentNotify] = "ReparentNotify",
+	[ConfigureNotify] = "ConfigureNotify",
+	[ConfigureRequest] = "ConfigureRequest",
+	[GravityNotify] = "GravityNotify",
+	[ResizeRequest] = "ResizeRequest",
+	[CirculateNotify] = "CirculateNotify",
+	[CirculateRequest] = "CirculateRequest",
+	[PropertyNotify] = "PropertyNotify",
+	[SelectionClear] = "SelectionClear",
+	[SelectionRequest] = "SelectionRequest",
+	[SelectionNotify] = "SelectionNotify",
+	[ColormapNotify] = "ColormapNotify",
+	[ClientMessage] = "ClientMessage",
+	[MappingNotify] = "MappingNotify",
+	[LASTEvent] = "LASTEvent"
+};
 
 int
 cairo_demo_run(cairo_demo_t *self)
