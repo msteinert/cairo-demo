@@ -44,14 +44,14 @@ endif
 LDFLAGS += $(CAIRO_XLIB_LIBS)
 endif
 ifeq ($(backend),directfb)
-ifeq ($(DIRECTFB_CFLAGS),)
-DIRECTFB_CFLAGS = $(shell $(PKG_CONFIG) --cflags directfb)
+ifeq ($(directfb_CFLAGS),)
+directfb_CFLAGS = $(shell $(PKG_CONFIG) --cflags directfb)
 endif
-CPPFLAGS += $(DIRECTFB_CFLAGS)
-ifeq ($(DIRECTFB_LIBS),)
-DIRECTFB_LIBS = $(shell $(PKG_CONFIG) --libs directfb)
+CPPFLAGS += $(directfb_CFLAGS)
+ifeq ($(directfb_LIBS),)
+directfb_LIBS = $(shell $(PKG_CONFIG) --libs directfb)
 endif
-LDFLAGS += $(DIRECTFB_LIBS)
+LDFLAGS += $(directfb_LIBS)
 endif
 # Define object files
 OBJECTS = $(SOURCES:%.c=%.o)

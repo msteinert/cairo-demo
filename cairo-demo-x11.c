@@ -21,7 +21,10 @@ struct _cairo_demo_t {
 };
 
 cairo_demo_t *
-cairo_demo_new(const char *name, int width, int height)
+cairo_demo_new(__attribute__ ((unused)) int argc,
+	       __attribute__ ((unused)) char **argv,
+	       const char *name,
+	       int width, int height)
 {
 	int n;
 	long mask;
