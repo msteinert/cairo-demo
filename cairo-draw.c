@@ -1,5 +1,4 @@
 #include <cairo.h>
-#include <pango/pangocairo.h>
 #include <math.h>
 #include <stdlib.h>
 

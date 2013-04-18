@@ -208,8 +208,8 @@ cairo_demo_run(cairo_demo_t *self)
 			break;
 		case ClientMessage:
 			if (event.xclient.message_type == wm_protocols) {
-				if (event.xclient.data.l[0]
-						== self->wm_delete_window) {
+				if ((Atom)event.xclient.data.l[0] ==
+						self->wm_delete_window) {
 					goto exit;
 				}
 			}
