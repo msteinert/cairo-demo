@@ -12,7 +12,7 @@ SOURCES += cairo-draw.c
 SOURCES += cairo-main.c
 SOURCES += cairo-operators.c
 # Define compiler flags
-CFLAGS = -std=c99 -g -O2 -Wall -Wextra -pedantic -D_GNU_SOURCE
+CFLAGS = -g -O2 -Wall -Wextra -D_GNU_SOURCE
 # Define linker flags
 LDFLAGS =
 # Define pkg-config dependencies
@@ -80,7 +80,7 @@ $(DEPDIR):
 	$(V_at)mkdir -p $@
 # Implicit compilation rule
 %.o: %.c | $(DEPDIR)
-	$(V_CC)$(CC) $(CPPFLAGS) -I. -DNAME=\"$(NAME)\" \
+	$(V_CC)$(CC) -std=c99 $(CPPFLAGS) -I. -DNAME=\"$(NAME)\" \
 		-DPROGRAM=\"$(PROGRAM)\" -DVERSION=\"$(VERSION)\" \
 		$(CFLAGS) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c $< -o $@
 	$(V_at)mv $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
