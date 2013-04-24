@@ -6,6 +6,8 @@ void
 setup(cairo_t *cr, int width, int height)
 {
 	cairo_scale(cr, width, height);
+	cairo_rectangle(cr, 0., 0., 1., 1.);
+	cairo_clip(cr);
 	cairo_save(cr);
 	cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
 	cairo_paint(cr);

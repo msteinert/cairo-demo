@@ -68,7 +68,7 @@ draw_3(cairo_t *cr)
 	char text[] = "Joy";
 	cairo_set_font_size(cr, .5);
 	cairo_set_source_rgb(cr, 0., 0., 0.);
-	cairo_select_font_face(cr, "Droid Sans", CAIRO_FONT_SLANT_NORMAL,
+	cairo_select_font_face(cr, "DejaVu Sans", CAIRO_FONT_SLANT_NORMAL,
 			CAIRO_FONT_WEIGHT_BOLD);
 	cairo_font_extents(cr, &fe);
 	cairo_device_to_user_distance(cr, &ux, &uy);
@@ -137,6 +137,8 @@ cairo_draw(cairo_t *cr, int width, int height)
 {
 	/* set the drawing scale */
 	cairo_scale(cr, width, height);
+	cairo_rectangle(cr, 0., 0., 1., 1.);
+	cairo_clip(cr);
 	cairo_set_source_rgb(cr, 1., 1., 1.);
 	cairo_paint(cr);
 	draw_1(cr);
