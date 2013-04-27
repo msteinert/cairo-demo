@@ -31,7 +31,7 @@ X11_CFLAGS = $($(PKG_CONFIG) --cflags x11)
 endif
 CPPFLAGS += $(X11_CFLAGS)
 ifeq ($(X11_LIBS),)
-X11_LIBS = $($(PKG_CONFIG) --libs x11)
+X11_LIBS = $(shell $(PKG_CONFIG) --libs x11)
 endif
 LDFLAGS += $(X11_LIBS)
 ifeq ($(CAIRO_XLIB_CFLAGS),)

@@ -221,8 +221,6 @@ cairo_demo_run(cairo_demo_t *self)
 		case ReparentNotify:
 			break;
 		default:
-			fprintf(stderr, "demo: unhandled event %s [%d]\n",
-					events[event.type], event.type);
 			break;
 		}
 	}
