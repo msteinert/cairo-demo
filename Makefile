@@ -6,6 +6,8 @@ NAME = "Cairo Demo"
 VERSION = "0.1"
 # Select the graphics backend
 backend ?= x11
+# Set the install prefix
+prefix ?= /usr/local
 # Define source files
 SOURCES += cairo-demo-$(backend).c
 SOURCES += cairo-draw.c
@@ -68,6 +70,10 @@ v_CC_0 = @echo "  CC    " $(@F);
 V_LINK = $(v_LINK_$(V))
 v_LINK_ = $(v_LINK_$(VERBOSE))
 v_LINK_0 = @echo "  LINK  " $(@F);
+# Define INSTALL verbose macro
+V_INSTALL = $(v_INSTALL_$(V))
+v_INSTALL_ = $(v_INSTALL_$(VERBOSE))
+v_INSTALL_0 = @echo "  INSTALL  " $?;
 # Define "at" verbose macro
 V_at = $(v_at_$(V))
 v_at_ = $(v_at_$(VERBOSE))
@@ -93,6 +99,9 @@ clean:
 # Clean everything
 distclean: clean
 	$(V_at)rm -rf $(DEPDIR)
+install: $(PROGRAM)
+	$(V_at)install -d $(DESTDIR)$(prefix)/bin
+	$(V_INSTALL)install $(PROGRAM) $(DESTDIR)$(prefix)/bin
 # Include generated dependencies
 -include $(DEPS)
-.PHONY: all clean distclean
+.PHONY: all clean distclean install

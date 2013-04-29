@@ -65,11 +65,11 @@ draw_3(cairo_t *cr)
 	double x, y, px, ux = 1., uy = 1., dashlength;
 	cairo_font_extents_t fe;
 	cairo_text_extents_t te;
-	char text[] = "Joy";
+	char text[] = "joy";
 	cairo_set_font_size(cr, .5);
 	cairo_set_source_rgb(cr, 0., 0., 0.);
 	cairo_select_font_face(cr, "DejaVu Sans", CAIRO_FONT_SLANT_NORMAL,
-			CAIRO_FONT_WEIGHT_BOLD);
+			CAIRO_FONT_WEIGHT_NORMAL);
 	cairo_font_extents(cr, &fe);
 	cairo_device_to_user_distance(cr, &ux, &uy);
 	if (ux > uy) {
@@ -141,5 +141,7 @@ cairo_draw(cairo_t *cr, int width, int height)
 	cairo_clip(cr);
 	cairo_set_source_rgb(cr, 1., 1., 1.);
 	cairo_paint(cr);
-	draw_1(cr);
+	//draw_1(cr);
+	//draw_2(cr);
+	draw_3(cr);
 }
