@@ -26,21 +26,25 @@ main(int argc, char **argv)
 {
 	int i, opt;
 	cairo_demo_t *demo;
-	const char *png = NULL;
+	const char *image = NULL, *png = NULL;
 	cairo_demo_draw_function_t draw = NULL;
 	struct option options[] = {
 		{ "help", no_argument, NULL, 'h' },
+		{ "image", required_argument, NULL, 'i' },
 		{ "operator", required_argument, NULL, 'o' },
 		{ "png", required_argument, NULL, 'p' },
 		{ "version", no_argument, NULL, 'v' },
 		{ NULL, no_argument, NULL, '\0' }
 	};
-	const char *sopts = ":ho:p:v";
+	const char *sopts = ":hi:o:p:v";
 	while (-1 != (opt = getopt_long(argc, argv, sopts, options, &i))) {
 		switch (opt) {
 		case 'h': /* help */
 			help(argv[0]);
 			return EXIT_SUCCESS;
+		case 'i': /* image */
+			image = optarg;
+			break;
 		case 'o': /* operator */
 			draw = cairo_operators_get_function(optarg);
 			break;
@@ -63,6 +67,9 @@ main(int argc, char **argv)
 	}
 	if (draw) {
 		cairo_demo_set_draw_function(demo, draw);
+	}
+	if (image) {
+		cairo_demo_set_image(demo, image);
 	}
 	if (png) {
 		cairo_demo_set_png(demo, png);

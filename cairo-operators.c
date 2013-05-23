@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-void
+static void
 setup(cairo_t *cr, int width, int height)
 {
 	cairo_scale(cr, width, height);
@@ -14,7 +14,7 @@ setup(cairo_t *cr, int width, int height)
 	cairo_restore(cr);
 }
 
-void
+static void
 red(cairo_t *cr)
 {
 	cairo_rectangle(cr, 0., 0., .75, .75);
@@ -22,7 +22,7 @@ red(cairo_t *cr)
 	cairo_fill(cr);
 }
 
-void
+static void
 blue(cairo_t *cr)
 {
 	cairo_rectangle(cr, .25, .25, .75, .75);
@@ -30,8 +30,9 @@ blue(cairo_t *cr)
 	cairo_fill(cr);
 }
 
-void
-draw_clear(cairo_t *cr, int width, int height)
+static void
+draw_clear(__attribute__((unused)) cairo_demo_t *self, cairo_t *cr,
+	   int width, int height)
 {
 	setup(cr, width, height);
 	red(cr);
@@ -39,8 +40,9 @@ draw_clear(cairo_t *cr, int width, int height)
 	blue(cr);
 }
 
-void
-draw_source(cairo_t *cr, int width, int height)
+static void
+draw_source(__attribute__((unused)) cairo_demo_t *self, cairo_t *cr,
+	    int width, int height)
 {
 	setup(cr, width, height);
 	red(cr);
@@ -48,8 +50,9 @@ draw_source(cairo_t *cr, int width, int height)
 	blue(cr);
 }
 
-void
-draw_over(cairo_t *cr, int width, int height)
+static void
+draw_over(__attribute__((unused)) cairo_demo_t *self, cairo_t *cr,
+	  int width, int height)
 {
 	setup(cr, width, height);
 	red(cr);
@@ -57,8 +60,9 @@ draw_over(cairo_t *cr, int width, int height)
 	blue(cr);
 }
 
-void
-draw_in(cairo_t *cr, int width, int height)
+static void
+draw_in(__attribute__((unused)) cairo_demo_t *self, cairo_t *cr,
+	int width, int height)
 {
 	setup(cr, width, height);
 	red(cr);
@@ -66,8 +70,9 @@ draw_in(cairo_t *cr, int width, int height)
 	blue(cr);
 }
 
-void
-draw_out(cairo_t *cr, int width, int height)
+static void
+draw_out(__attribute__((unused)) cairo_demo_t *self, cairo_t *cr,
+	 int width, int height)
 {
 	setup(cr, width, height);
 	red(cr);
@@ -75,8 +80,9 @@ draw_out(cairo_t *cr, int width, int height)
 	blue(cr);
 }
 
-void
-draw_atop(cairo_t *cr, int width, int height)
+static void
+draw_atop(__attribute__((unused)) cairo_demo_t *self, cairo_t *cr,
+	  int width, int height)
 {
 	setup(cr, width, height);
 	red(cr);
@@ -84,8 +90,9 @@ draw_atop(cairo_t *cr, int width, int height)
 	blue(cr);
 }
 
-void
-draw_dest(cairo_t *cr, int width, int height)
+static void
+draw_dest(__attribute__((unused)) cairo_demo_t *self, cairo_t *cr,
+	  int width, int height)
 {
 	setup(cr, width, height);
 	red(cr);
@@ -93,8 +100,9 @@ draw_dest(cairo_t *cr, int width, int height)
 	blue(cr);
 }
 
-void
-draw_dest_over(cairo_t *cr, int width, int height)
+static void
+draw_dest_over(__attribute__((unused)) cairo_demo_t *self, cairo_t *cr,
+	       int width, int height)
 {
 	setup(cr, width, height);
 	red(cr);
@@ -102,8 +110,9 @@ draw_dest_over(cairo_t *cr, int width, int height)
 	blue(cr);
 }
 
-void
-draw_dest_in(cairo_t *cr, int width, int height)
+static void
+draw_dest_in(__attribute__((unused)) cairo_demo_t *self, cairo_t *cr,
+	     int width, int height)
 {
 	setup(cr, width, height);
 	red(cr);
@@ -111,8 +120,9 @@ draw_dest_in(cairo_t *cr, int width, int height)
 	blue(cr);
 }
 
-void
-draw_dest_out(cairo_t *cr, int width, int height)
+static void
+draw_dest_out(__attribute__((unused)) cairo_demo_t *self, cairo_t *cr,
+	      int width, int height)
 {
 	setup(cr, width, height);
 	red(cr);
@@ -120,8 +130,9 @@ draw_dest_out(cairo_t *cr, int width, int height)
 	blue(cr);
 }
 
-void
-draw_dest_atop(cairo_t *cr, int width, int height)
+static void
+draw_dest_atop(__attribute__((unused)) cairo_demo_t *self, cairo_t *cr,
+	       int width, int height)
 {
 	setup(cr, width, height);
 	red(cr);
@@ -129,8 +140,9 @@ draw_dest_atop(cairo_t *cr, int width, int height)
 	blue(cr);
 }
 
-void
-draw_xor(cairo_t *cr, int width, int height)
+static void
+draw_xor(__attribute__((unused)) cairo_demo_t *self, cairo_t *cr,
+	 int width, int height)
 {
 	setup(cr, width, height);
 	red(cr);
@@ -138,8 +150,9 @@ draw_xor(cairo_t *cr, int width, int height)
 	blue(cr);
 }
 
-void
-draw_add(cairo_t *cr, int width, int height)
+static void
+draw_add(__attribute__((unused)) cairo_demo_t *self, cairo_t *cr,
+	 int width, int height)
 {
 	setup(cr, width, height);
 	red(cr);
@@ -147,8 +160,9 @@ draw_add(cairo_t *cr, int width, int height)
 	blue(cr);
 }
 
-void
-draw_saturate(cairo_t *cr, int width, int height)
+static void
+draw_saturate(__attribute__((unused)) cairo_demo_t *self, cairo_t *cr,
+	      int width, int height)
 {
 	setup(cr, width, height);
 	red(cr);
@@ -156,8 +170,9 @@ draw_saturate(cairo_t *cr, int width, int height)
 	blue(cr);
 }
 
-void
-draw_multiply(cairo_t *cr, int width, int height)
+static void
+draw_multiply(__attribute__((unused)) cairo_demo_t *self, cairo_t *cr,
+	      int width, int height)
 {
 	setup(cr, width, height);
 	red(cr);
@@ -165,8 +180,9 @@ draw_multiply(cairo_t *cr, int width, int height)
 	blue(cr);
 }
 
-void
-draw_screen(cairo_t *cr, int width, int height)
+static void
+draw_screen(__attribute__((unused)) cairo_demo_t *self, cairo_t *cr,
+	    int width, int height)
 {
 	setup(cr, width, height);
 	red(cr);
@@ -174,8 +190,9 @@ draw_screen(cairo_t *cr, int width, int height)
 	blue(cr);
 }
 
-void
-draw_overlay(cairo_t *cr, int width, int height)
+static void
+draw_overlay(__attribute__((unused)) cairo_demo_t *self, cairo_t *cr,
+	     int width, int height)
 {
 	setup(cr, width, height);
 	red(cr);
@@ -183,8 +200,9 @@ draw_overlay(cairo_t *cr, int width, int height)
 	blue(cr);
 }
 
-void
-draw_darken(cairo_t *cr, int width, int height)
+static void
+draw_darken(__attribute__((unused)) cairo_demo_t *self, cairo_t *cr,
+	    int width, int height)
 {
 	setup(cr, width, height);
 	red(cr);
@@ -192,8 +210,9 @@ draw_darken(cairo_t *cr, int width, int height)
 	blue(cr);
 }
 
-void
-draw_lighten(cairo_t *cr, int width, int height)
+static void
+draw_lighten(__attribute__((unused)) cairo_demo_t *self, cairo_t *cr,
+	     int width, int height)
 {
 	setup(cr, width, height);
 	red(cr);
@@ -201,8 +220,9 @@ draw_lighten(cairo_t *cr, int width, int height)
 	blue(cr);
 }
 
-void
-draw_color_dodge(cairo_t *cr, int width, int height)
+static void
+draw_color_dodge(__attribute__((unused)) cairo_demo_t *self, cairo_t *cr,
+		 int width, int height)
 {
 	setup(cr, width, height);
 	red(cr);
@@ -210,8 +230,9 @@ draw_color_dodge(cairo_t *cr, int width, int height)
 	blue(cr);
 }
 
-void
-draw_color_burn(cairo_t *cr, int width, int height)
+static void
+draw_color_burn(__attribute__((unused)) cairo_demo_t *self, cairo_t *cr,
+		int width, int height)
 {
 	setup(cr, width, height);
 	red(cr);
@@ -219,8 +240,9 @@ draw_color_burn(cairo_t *cr, int width, int height)
 	blue(cr);
 }
 
-void
-draw_hard_light(cairo_t *cr, int width, int height)
+static void
+draw_hard_light(__attribute__((unused)) cairo_demo_t *self, cairo_t *cr,
+		int width, int height)
 {
 	setup(cr, width, height);
 	red(cr);
@@ -228,8 +250,9 @@ draw_hard_light(cairo_t *cr, int width, int height)
 	blue(cr);
 }
 
-void
-draw_soft_light(cairo_t *cr, int width, int height)
+static void
+draw_soft_light(__attribute__((unused)) cairo_demo_t *self, cairo_t *cr,
+		int width, int height)
 {
 	setup(cr, width, height);
 	red(cr);
@@ -237,8 +260,9 @@ draw_soft_light(cairo_t *cr, int width, int height)
 	blue(cr);
 }
 
-void
-draw_difference(cairo_t *cr, int width, int height)
+static void
+draw_difference(__attribute__((unused)) cairo_demo_t *self, cairo_t *cr,
+		int width, int height)
 {
 	setup(cr, width, height);
 	red(cr);
@@ -246,8 +270,9 @@ draw_difference(cairo_t *cr, int width, int height)
 	blue(cr);
 }
 
-void
-draw_exclusion(cairo_t *cr, int width, int height)
+static void
+draw_exclusion(__attribute__((unused)) cairo_demo_t *self, cairo_t *cr,
+	       int width, int height)
 {
 	setup(cr, width, height);
 	red(cr);
@@ -255,8 +280,9 @@ draw_exclusion(cairo_t *cr, int width, int height)
 	blue(cr);
 }
 
-void
-draw_hsl_hue(cairo_t *cr, int width, int height)
+static void
+draw_hsl_hue(__attribute__((unused)) cairo_demo_t *self, cairo_t *cr,
+	     int width, int height)
 {
 	setup(cr, width, height);
 	red(cr);
@@ -264,8 +290,9 @@ draw_hsl_hue(cairo_t *cr, int width, int height)
 	blue(cr);
 }
 
-void
-draw_hsl_saturation(cairo_t *cr, int width, int height)
+static void
+draw_hsl_saturation(__attribute__((unused)) cairo_demo_t *self, cairo_t *cr,
+		    int width, int height)
 {
 	setup(cr, width, height);
 	red(cr);
@@ -273,8 +300,9 @@ draw_hsl_saturation(cairo_t *cr, int width, int height)
 	blue(cr);
 }
 
-void
-draw_hsl_color(cairo_t *cr, int width, int height)
+static void
+draw_hsl_color(__attribute__((unused)) cairo_demo_t *self, cairo_t *cr,
+	       int width, int height)
 {
 	setup(cr, width, height);
 	red(cr);
@@ -282,8 +310,9 @@ draw_hsl_color(cairo_t *cr, int width, int height)
 	blue(cr);
 }
 
-void
-draw_hsl_luminosity(cairo_t *cr, int width, int height)
+static void
+draw_hsl_luminosity(__attribute__((unused)) cairo_demo_t *self, cairo_t *cr,
+		    int width, int height)
 {
 	setup(cr, width, height);
 	red(cr);

@@ -15,6 +15,7 @@ struct _cairo_demo_t {
 	IDirectFBSurface *surface;
 	int width, height;
 	cairo_demo_draw_function_t draw;
+	char *image;
 	char *png;
 };
 
@@ -24,7 +25,7 @@ struct _cairo_demo_t {
 
 #define cairo_error_message(err) \
 	fprintf(stderr, "%s:%d: %s\n", __FILE__, __LINE__, \
-		cairo_status_to_string(status));
+		cairo_status_to_string(err));
 
 cairo_demo_t *
 cairo_demo_new(int argc, char **argv,
@@ -48,19 +49,33 @@ cairo_demo_new(int argc, char **argv,
 		directfb_error_message(err);
 		goto error;
 	}
+	err = self->dfb->CreateInputEventBuffer(self->dfb,
+			DICAPS_ALL, DFB_TRUE, &self->buffer);
+	if (DFB_OK != err) {
+		directfb_error_message(err);
+		goto error;
+	}
 	err = self->dfb->GetDisplayLayer(self->dfb, DLID_PRIMARY, &self->layer);
 	if (DFB_OK != err) {
 		directfb_error_message(err);
 		goto error;
 	}
-	(void)self->layer->EnableCursor(self->layer, 1);
+	err = self->layer->SetCooperativeLevel(self->layer,
+			DLSCL_ADMINISTRATIVE);
+	if (DFB_OK != err) {
+		directfb_error_message(err);
+	}
+	err = self->layer->EnableCursor(self->layer, 1);
+	if (DFB_OK != err) {
+		directfb_error_message(err);
+	}
 	DFBWindowDescription win_dsc = {
 		.flags = DWDESC_POSX | DWDESC_POSY
 			| DWDESC_WIDTH | DWDESC_HEIGHT
 			| DWDESC_CAPS | DWDESC_SURFACE_CAPS
 			| DWDESC_STACKING,
-		.posx = 100,
-		.posy = 100,
+		.posx = 600,
+		.posy = 300,
 		.width = width,
 		.height = height,
 		.caps = DWCAPS_ALPHACHANNEL,
@@ -73,11 +88,6 @@ cairo_demo_new(int argc, char **argv,
 		goto error;
 	}
 	(void)self->window->SetOpacity(self->window, 0xff);
-	err = self->window->CreateEventBuffer(self->window, &self->buffer);
-	if (DFB_OK != err) {
-		directfb_error_message(err);
-		goto error;
-	}
 	err = self->window->GetSurface(self->window, &self->surface);
 	if (DFB_OK != err) {
 		directfb_error_message(err);
@@ -109,6 +119,7 @@ cairo_demo_destroy(cairo_demo_t *self)
 		if (self->dfb) {
 			self->dfb->Release(self->dfb);
 		}
+		free(self->image);
 		free(self->png);
 		free(self);
 	}
@@ -121,6 +132,18 @@ cairo_demo_set_draw_function(cairo_demo_t *self,
 	self->draw = draw;
 }
 
+cairo_surface_t *
+cairo_demo_get_image(cairo_demo_t *self)
+{
+	return cairo_image_surface_create_from_png(self->image);
+}
+
+void
+cairo_demo_set_image(cairo_demo_t *self, const char *image)
+{
+	self->image = strdup(image);
+}
+
 void
 cairo_demo_set_png(cairo_demo_t *self, const char *png)
 {
@@ -131,7 +154,7 @@ int
 cairo_demo_run(cairo_demo_t *self)
 {
 	cairo_t *cr = NULL;
-	DFBWindowEvent event;
+	DFBInputEvent event;
 	int status = EXIT_SUCCESS;
 	cairo_surface_t *surface = NULL;
 	surface = cairo_directfb_surface_create(self->dfb, self->surface);
@@ -141,31 +164,31 @@ cairo_demo_run(cairo_demo_t *self)
 		goto exit;
 	}
 	cr = cairo_create(surface);
-	if (CAIRO_STATUS_SUCCESS != cairo_status(cr)) {
-		cairo_error_message(cairo_status(cr));
-		status = EXIT_FAILURE;
-		goto exit;
-	}
-	self->draw(cr, self->width, self->height);
+	self->draw(self, cr, self->width, self->height);
+	self->surface->Flip(self->surface, NULL, DSFLIP_WAITFORSYNC);
+	cairo_destroy(cr);
 	while (true) {
-		self->surface->Flip(self->surface, NULL, DSFLIP_WAITFORSYNC);
 		(void)self->buffer->WaitForEvent(self->buffer);
 		while (DFB_OK == self->buffer->GetEvent(self->buffer,
 					DFB_EVENT(&event))) {
 			switch (event.type) {
-			case DWET_KEYDOWN:
+			case DIET_KEYPRESS:
 				switch (event.key_id) {
 				case DIKI_RIGHT:
-					self->window->Move(self->window, 1, 0);
+					self->window->Move(self->window,
+							10, 0);
 					break;
 				case DIKI_LEFT:
-					self->window->Move(self->window, -1, 0);
+					self->window->Move(self->window,
+							-10, 0);
 					break;
 				case DIKI_UP:
-					self->window->Move(self->window, 0, -1);
+					self->window->Move(self->window,
+							0, -10);
 					break;
 				case DIKI_DOWN:
-					self->window->Move(self->window, 0, 1);
+					self->window->Move(self->window,
+							0, 10);
 					break;
 				case DIKI_Q:
 					goto exit;
@@ -177,13 +200,37 @@ cairo_demo_run(cairo_demo_t *self)
 				break;
 			}
 		}
+		cr = cairo_create(surface);
+		self->draw(self, cr, self->width, self->height);
+		self->surface->Flip(self->surface, NULL, DSFLIP_WAITFORSYNC);
+		cairo_destroy(cr);
 	}
 exit:
 	if (self->png) {
 		cairo_surface_write_to_png(surface, self->png);
 	}
-	cairo_destroy(cr);
 	cairo_surface_destroy(surface);
 	cairo_demo_destroy(self);
 	return status;
+}
+
+cairo_surface_t *
+cairo_demo_create_surface(cairo_demo_t *self, int width, int height)
+{
+	cairo_surface_t *surface;
+	IDirectFBSurface *dfb_surface = NULL;
+	DFBSurfaceDescription dsc = {
+		.flags = DSDESC_WIDTH | DSDESC_HEIGHT |
+			DSDESC_CAPS | DSDESC_PIXELFORMAT,
+		.width = width,
+		.height = height,
+		.caps = DSCAPS_PREMULTIPLIED,
+		.pixelformat = DSPF_ARGB
+	};
+	(void)self->dfb->CreateSurface(self->dfb, &dsc, &dfb_surface);
+	surface = cairo_directfb_surface_create(self->dfb, dfb_surface);
+	if (dfb_surface) {
+		(void)dfb_surface->Release(dfb_surface);
+	}
+	return surface;
 }

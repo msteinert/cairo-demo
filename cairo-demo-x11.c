@@ -17,6 +17,7 @@ struct _cairo_demo_t {
 	Atom wm_delete_window;
 	int width, height;
 	cairo_demo_draw_function_t draw;
+	char *image;
 	char *png;
 };
 
@@ -110,9 +111,8 @@ cairo_demo_destroy(cairo_demo_t *self)
 			}
 			XCloseDisplay(self->display);
 		}
-		if (self->png) {
-			free(self->png);
-		}
+		free(self->image);
+		free(self->png);
 		free(self);
 	}
 }
@@ -122,6 +122,18 @@ cairo_demo_set_draw_function(cairo_demo_t *self,
 		cairo_demo_draw_function_t draw)
 {
 	self->draw = draw;
+}
+
+cairo_surface_t *
+cairo_demo_get_image(cairo_demo_t *self)
+{
+	return cairo_image_surface_create_from_png(self->image);
+}
+
+void
+cairo_demo_set_image(cairo_demo_t *self, const char *image)
+{
+	self->image = strdup(image);
 }
 
 void
@@ -200,7 +212,7 @@ cairo_demo_run(cairo_demo_t *self)
 					event.xexpose.width,
 					event.xexpose.height);
 			cairo_clip(self->cr);
-			self->draw(self->cr, self->width, self->height);
+			self->draw(self, self->cr, self->width, self->height);
 			cairo_restore(self->cr);
 			break;
 		case ConfigureNotify:
@@ -230,4 +242,61 @@ exit:
 	}
 	cairo_demo_destroy(self);
 	return status;
+}
+
+
+struct Data {
+        Display *display;
+        Pixmap pixmap;
+};
+
+static void
+data_destroy(struct Data *data)
+{
+        if (data) {
+                XFreePixmap(data->display, data->pixmap);
+                free(data);
+        }
+}
+
+cairo_surface_t *
+cairo_demo_create_surface(cairo_demo_t *self, int width, int height)
+{
+	Pixmap pixmap = None;
+	struct Data *data = NULL;
+	cairo_surface_t *surface = NULL;
+	int n = DefaultScreen(self->display);
+	static const cairo_user_data_key_t key;
+	pixmap = XCreatePixmap(self->display, RootWindow(self->display, n),
+			width, height, DefaultDepth(self->display, n));
+	if (!pixmap) {
+		goto error;
+	}
+	// create cairo surface
+	surface = cairo_xlib_surface_create(self->display, pixmap,
+			DefaultVisual(self->display, n), width, height);
+	cairo_status_t status = cairo_surface_status(surface);
+	if (CAIRO_STATUS_SUCCESS != status) {
+		goto error;
+	}
+	// attach destroy data
+	data = malloc(sizeof(*data));
+	if (!data) {
+		goto error;
+	}
+	data->display = self->display;
+	data->pixmap = pixmap;
+	status = cairo_surface_set_user_data(surface, &key, data,
+			(cairo_destroy_func_t)data_destroy);
+	if (CAIRO_STATUS_SUCCESS != status) {
+		goto error;
+	}
+	return surface;
+error:
+	if (pixmap) {
+		(void)XFreePixmap(self->display, pixmap);
+	}
+	cairo_surface_destroy(surface);
+	free(data);
+	return NULL;
 }
